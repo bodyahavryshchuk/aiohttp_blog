@@ -4,7 +4,7 @@ from sqlalchemy import Column, ForeignKey, Boolean, Integer, DateTime, Text, VAR
 from sqlalchemy import MetaData, Table
 
 
-__all__ = ('category', 'post', 'users', 'permissions')
+__all__ = ('users', 'permissions')
 
 from sqlalchemy.orm import mapper
 
@@ -38,42 +38,6 @@ Permissions = sa.Table(
                             ondelete='CASCADE'),
 )
 
-Category = Table(
-    'category', meta,
-    Column('id', Integer, primary_key=True, index=True, unique=True, autoincrement=True),
-    Column('name', VARCHAR, nullable=True),
-)
-
-
-Post = Table(
-    'post', meta,
-    Column('id', Integer, primary_key=True, index=True, unique=True, autoincrement=True),
-    Column('author', Integer, ForeignKey('users.id')),
-    Column('category', Integer, ForeignKey('category.id')),
-    Column('name', VARCHAR),
-    Column('description', Text),
-    Column('price', Integer),
-    Column('available', Boolean, default=True),
-    Column('created', DateTime),
-)
-
-
-class CategoryObj(object):
-    def __init__(self, name):
-        self.name = name
-
-
-class PostObj(object):
-    def __init__(self, author, category, name, description, price):
-        self.id = id
-        self.author = author
-        self.category = category
-        self.name = name
-        self.description = description
-        self.price = price
-        self.available = True
-        self.created = datetime.datetime.now()
-
 
 class UsersObj(object):
     def __init__(self, login, passwd):
@@ -84,7 +48,5 @@ class UsersObj(object):
         self.disabled = False
 
 
-category_mapper = mapper(CategoryObj, Category)
-post_mapper = mapper(PostObj, Post)
 users_mapper = mapper(UsersObj, Users)
 

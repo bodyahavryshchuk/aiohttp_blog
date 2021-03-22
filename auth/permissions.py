@@ -1,8 +1,8 @@
 from aiohttp import web
 from sqlalchemy import select
 
-from models import Post
-from services import get_user_id
+from post.models import Post
+from .services import get_user_id
 
 
 async def is_author(request, username):

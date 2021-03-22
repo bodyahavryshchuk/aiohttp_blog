@@ -3,7 +3,7 @@ import sqlalchemy as sa
 from aiohttp_security.abc import AbstractAuthorizationPolicy
 from passlib.hash import sha256_crypt
 
-import models
+from . import models
 
 
 class DBAuthorizationPolicy(AbstractAuthorizationPolicy):

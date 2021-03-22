@@ -6,7 +6,7 @@ from aiohttp_session.redis_storage import RedisStorage
 from aiohttp_security import setup as setup_security
 from aiohttp_security import SessionIdentityPolicy
 
-from auth import DBAuthorizationPolicy
+from auth.auth import DBAuthorizationPolicy
 import asyncpgsa
 from aioredis import create_pool
 from urls import setup_routes
@@ -20,7 +20,7 @@ async def init():
     app['database'] = await asyncpgsa.create_pool(user='postgres',
                                                   database='aiohttp',
                                                   host='127.0.0.1',
-                                                  password='password')
+                                                  password='rfrfle111')
 
     redis_pool = await create_pool(('localhost', 6379))
     setup_session(app, RedisStorage(redis_pool))
