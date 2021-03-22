@@ -20,7 +20,7 @@ async def init():
     app['database'] = await asyncpgsa.create_pool(user='postgres',
                                                   database='aiohttp',
                                                   host='127.0.0.1',
-                                                  password='rfrfle111')
+                                                  password='password')
 
     redis_pool = await create_pool(('localhost', 6379))
     setup_session(app, RedisStorage(redis_pool))
