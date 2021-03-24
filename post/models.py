@@ -15,7 +15,6 @@ Category = Table(
     Column('name', VARCHAR, nullable=True),
 )
 
-
 Post = Table(
     'post', meta,
     Column('id', Integer, primary_key=True, index=True, unique=True, autoincrement=True),
@@ -24,6 +23,16 @@ Post = Table(
     Column('name', VARCHAR),
     Column('description', Text),
     Column('price', Integer),
+    Column('available', Boolean, default=True),
+    Column('created', DateTime),
+)
+
+Comment = Table(
+    'comment', meta,
+    Column('id', Integer, primary_key=True, index=True, unique=True, autoincrement=True),
+    Column('author', Integer, ForeignKey('users.id')),
+    Column('post', Integer, ForeignKey('post.id')),
+    Column('text', Text),
     Column('available', Boolean, default=True),
     Column('created', DateTime),
 )
@@ -43,18 +52,20 @@ class PostObj(object):
         self.description = description
         self.price = price
         self.available = True
-        self.created = datetime.datetime.now()
+        self.created = None
 
 
-class UsersObj(object):
-    def __init__(self, login, passwd):
+class CommentObj(object):
+    def __init__(self, post, author, text):
         self.id = id
-        self.login = login
-        self.passwd = passwd
-        self.is_superuser = False
-        self.disabled = False
+        self.post = post
+        self.author = author
+        self.text = text
+        self.available = True
+        self.created = None
 
 
 category_mapper = mapper(CategoryObj, Category)
 post_mapper = mapper(PostObj, Post)
+comment_mapper = mapper(CommentObj, Comment)
 

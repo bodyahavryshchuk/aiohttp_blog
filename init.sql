@@ -37,10 +37,24 @@ CREATE TABLE post (
     FOREIGN KEY (author)  REFERENCES users (id) ON DELETE CASCADE
 );
 
+CREATE TABLE comment (
+    id serial primary key,
+    post int,
+    author int,
+    text varchar(500) not null,
+    available bool not null,
+    created date,
+    FOREIGN KEY (author)  REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (post)  REFERENCES post (id) ON DELETE CASCADE
+);
+
 insert into category (name) values ('category2');
 insert into category (name) values ('category1');
 insert into post (category, name, description, price, available) values (1, 'post1', 'descr', 124, True)
 insert into post (author, category, name, description, price, available) values (1, 1, 'post2', 'descr', 122, True)
+
+insert into comment (post, author, text, available) values (1, 3, 'fhfgjfj', True);
+insert into comment (post, author, text, available) values (1, 3, 'fhfgjfj', True);
 
 
 INSERT INTO users(login, passwd, is_superuser, disabled)

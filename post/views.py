@@ -1,9 +1,11 @@
+from datetime import datetime
+
 from sqlalchemy import select, insert, update
 
 from aiohttp_jinja2 import render_template
 
 from . import forms
-from .models import Post, PostObj
+from .models import Post, PostObj, CommentObj, Comment
 from auth.permissions import is_author
 from .services import get_categories
 from auth.services import get_user_id
@@ -81,7 +83,8 @@ async def post_create(request):
                             name=post_obj.name,
                             description=post_obj.description,
                             price=post_obj.price,
-                            available=True
+                            available=True,
+                            created=datetime.utcnow()
                         )
                     )
 
@@ -150,6 +153,7 @@ async def post_update(request):
 
 async def post_detail(request):
     username = await authorized_userid(request)
+    form = forms.CommentForm()
 
     async with request.app['database'].acquire() as conn:
         post = select([Post.c.id, Post.c.name, Post.c.description, Post.c.price]) \
@@ -158,8 +162,43 @@ async def post_detail(request):
 
     return render_template('post_detail.html', request, {'categories': await get_categories(request),
                                                          'post': post[0],
+                                                         'form': form,
                                                          'logged': username
                                                          })
+
+
+async def comment_create(request):
+    username = await authorized_userid(request)
+    if username:
+        if request.method == 'POST':
+
+            data = await request.post()
+            form = forms.CommentForm(data)
+
+            form.author.data = await get_user_id(request, username)
+            form.post.data = request.match_info['id']
+            if form.validate():
+                post, author, text = int(form.post.data), \
+                                     int(form.author.data), \
+                                     data['text']
+                comment_obj = CommentObj(post, author, text)
+
+                async with request.app['database'].acquire() as conn:
+                    await conn.execute(
+                        insert(Comment).values(
+                            author=comment_obj.author,
+                            post=comment_obj.post,
+                            text=comment_obj.text,
+                            available=True,
+                            created=datetime.utcnow()
+                        )
+                    )
+
+                location = request.app.router['post_list'].url_for()
+                raise web.HTTPFound(location=location)
+    else:
+        location = request.app.router['login'].url_for()
+        raise web.HTTPFound(location=location)
 
 
 async def search(request):

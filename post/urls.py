@@ -15,6 +15,8 @@ def setup_post_routes(app):
 
                     web.get('/post/{id}', views.post_detail, name='post_detail'),
 
+                    web.post('/post/{id}/comment/create', views.comment_create, name='comment_create'),
+
                     web.get('/search', views.search, name='search'),
 
                     web.get('/', views.index, name='index'),
