@@ -44,6 +44,9 @@
             <div class="product-information"><!--/product-information-->
                 <img src="images/product-details/new.jpg" class="newarrival" alt=""/>
                 <h2>{{post.name}}</h2>
+                {% if superuser %}
+                <h2><a href="{{url ('post_delete', id=post.id) }}">Delete post</a></h2>
+                {% endif %}
                 <img src="images/product-details/rating.png" alt=""/>
                 <span>
                     <form action="" method="post">

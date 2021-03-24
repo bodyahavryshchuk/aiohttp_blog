@@ -13,6 +13,8 @@ def setup_post_routes(app):
                     web.get('/post/{id}/update', views.post_update, name='post_update'),
                     web.post('/post/{id}/update', views.post_update, name='post_update'),
 
+                    web.get('/post/{id}/delete', views.post_delete, name='post_delete'),
+
                     web.get('/post/{id}', views.post_detail, name='post_detail'),
 
                     web.post('/post/{id}/comment/create', views.comment_create, name='comment_create'),

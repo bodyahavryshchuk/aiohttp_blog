@@ -1,12 +1,12 @@
 from datetime import datetime
 
-from sqlalchemy import select, insert, update
+from sqlalchemy import select, insert, update, delete
 
 from aiohttp_jinja2 import render_template
 
 from . import forms
 from .models import Post, PostObj, CommentObj, Comment
-from auth.permissions import is_author
+from auth.permissions import is_author, is_superuser
 from .services import get_categories
 from auth.services import get_user_id
 from aiohttp import web
@@ -153,6 +153,7 @@ async def post_update(request):
 
 async def post_detail(request):
     username = await authorized_userid(request)
+    superuser = await is_superuser(request, username)
     form = forms.CommentForm()
 
     async with request.app['database'].acquire() as conn:
@@ -163,8 +164,21 @@ async def post_detail(request):
     return render_template('post_detail.html', request, {'categories': await get_categories(request),
                                                          'post': post[0],
                                                          'form': form,
-                                                         'logged': username
+                                                         'logged': username,
+                                                         'superuser': superuser
                                                          })
+
+
+async def post_delete(request):
+    username = await authorized_userid(request)
+    if await is_superuser(request, username):
+        async with request.app['database'].acquire() as conn:
+            post = delete(Post) \
+                .where(Post.c.id == int(request.match_info['id']))
+            post = await conn.fetch(post)
+
+        location = request.app.router['post_list'].url_for()
+        raise web.HTTPFound(location=location)
 
 
 async def comment_create(request):
